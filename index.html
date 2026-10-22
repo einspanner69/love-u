@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>А ты меня любишь?</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3a2e33;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #e8d5da;
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  .container {
+    position: relative;
+    max-width: 640px;
+    width: 100%;
+    background: #4a3a40;
+    border-radius: 16px;
+    padding: 48px 36px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    border: 1px solid #5e4a51;
+    transition: padding 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .container.text-mode {
+    padding: 36px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 36px;
+    color: #f2e2e7;
+    letter-spacing: 0.5px;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 100px;
+    opacity: 1;
+    overflow: hidden;
+  }
+
+  h1.hidden {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+    pointer-events: none;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    min-height: 60px;
+    margin-bottom: 0;
+    opacity: 1;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .buttons.hidden {
+    opacity: 0;
+    min-height: 0;
+    height: 0;
+    margin-bottom: 0;
+    padding: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1.15rem;
+    padding: 14px 44px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    letter-spacing: 0.5px;
+  }
+
+  #btn-yes {
+    background: #a86b7e;
+    color: #fdf0f3;
+  }
+
+  #btn-yes:hover {
+    background: #bd7f92;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(168, 107, 126, 0.4);
+  }
+
+  #btn-no {
+    background: #7d5a66;
+    color: #fdf0f3;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Добавили эффект подскакивания при наведении, как у кнопки "Да" */
+  #btn-no:hover {
+    background: #946c7a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(125, 90, 102, 0.4);
+  }
+
+  /* Важно: при убегании кнопка меняет позицию (left/top), 
+     поэтому transform для неё нужно сбрасывать, чтобы не было конфликтов */
+  #btn-no.running {
+    transition: left 0.25s ease, top 0.25s ease, background 0.25s ease;
+  }
+
+  /* Убираем эффект подскакивания, пока кнопка "убегает" */
+  #btn-no.running:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .message {
+    margin-top: 0;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #dcc7ce;
+    text-align: center;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                margin-top 0.6s ease;
+  }
+
+  .message.show {
+    margin-top: 0;
+    max-height: 1200px;
+    opacity: 1;
+  }
+
+  .message .short {
+    display: block;
+    font-size: 1.4rem;
+    color: #f2e2e7;
+    margin-bottom: 20px;
+  }
+
+  .message .long {
+    display: block;
+    text-align: center;
+    font-size: 0.98rem;
+    color: #cbb4bc;
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="container">
+  <h1 id="question">А ты меня любишь?</h1>
+
+  <div class="buttons" id="buttons">
+    <button id="btn-yes">Да</button>
+    <button id="btn-no">Нет</button>
+  </div>
+
+  <div class="message" id="message">
+    <span class="short" id="short-text">А я тебя люблю.</span>
+    <span class="long">
+      В этом чувстве нет никакой фальши, нет той показной мишуры, которой мы часто
+      украшаем свои отношения, чтобы казаться лучше в глазах окружающих. С тобой я
+      настоящий — уставший, иногда раздражённый, иногда слабый, но настоящий.
+      Ты видишь меня насквозь, видишь все мои трещины и сколы, но не пытаешься
+      переделать меня, не лепишь из меня идеал, а просто принимаешь таким, какой
+      я есть, и в этом твоём принятии кроется что-то настолько глубокое и мудрое,
+      что я порой теряюсь. Ты — та, кому я могу рассказать о своих самых сокровенных
+      страхах, не боясь быть осмеянным, та, чьё мнение для меня важнее любых доводов
+      разума. Твоя улыбка — это тот самый спасательный круг, который вытаскивает меня
+      со дна самых мрачных дней, а твои объятия — единственное место на земле, где
+      я могу спрятаться от всего мира.
+    </span>
+  </div>
+</div>
+
+<script>
+  const btnYes = document.getElementById('btn-yes');
+  const btnNo = document.getElementById('btn-no');
+  const buttons = document.getElementById('buttons');
+  const message = document.getElementById('message');
+  const question = document.getElementById('question');
+  const container = document.getElementById('container');
+  const shortText = document.getElementById('short-text');
+
+  const MAX_DODGES = 5;
+  let dodgeCount = 0;
+  let surrendered = false;
+
+  function dodge() {
+    const rect = btnNo.getBoundingClientRect();
+    const pad = 20;
+    const maxX = window.innerWidth - rect.width - pad;
+    const maxY = window.innerHeight - rect.height - pad;
+
+    const newX = Math.max(pad, Math.random() * maxX);
+    const newY = Math.max(pad, Math.random() * maxY);
+
+    btnNo.classList.add('running');
+    btnNo.style.position = 'fixed';
+    btnNo.style.left = newX + 'px';
+    btnNo.style.top = newY + 'px';
+  }
+
+  function showLove(withShort) {
+    buttons.classList.add('hidden');
+    question.classList.add('hidden');
+    container.classList.add('text-mode');
+
+    shortText.style.display = withShort ? 'block' : 'none';
+    
+    setTimeout(() => {
+      message.classList.add('show');
+    }, 150);
+  }
+
+  btnYes.addEventListener('click', function () {
+    showLove(false);
+  });
+
+  btnNo.addEventListener('click', function () {
+    if (surrendered) return;
+
+    if (dodgeCount < MAX_DODGES) {
+      dodgeCount++;
+      dodge();
+    } else {
+      surrendered = true;
+      btnNo.textContent = 'А я тебя люблю';
+      btnNo.style.background = '#a86b7e';
+      btnNo.style.fontSize = '1rem';
+      showLove(true);
+    }
+  });
+</script>
+
+</body>
+</html>
